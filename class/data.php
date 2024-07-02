@@ -38,14 +38,19 @@ class Data
     public function filterDataByYear($year)
     {
         $data = $this->fetchData();
+    
         $filteredData = array_filter($data, function ($item) use ($year) {
-            return strpos($item['date'], $year) !== false;
+            // Parse the date and get the year
+            $itemYear = date('Y', strtotime($item['date']));
+            return $itemYear == $year;
         });
-
+    
         return array_values($filteredData); // Reset array keys after filtering
     }
+    
 }
 
+/*
 // Usage
 $data = new Data();
 $filteredData = $data->fetchData();
@@ -61,27 +66,4 @@ foreach ($filteredData as $item) {
     echo 'Total Vehicles: ' . $item['total_vehicles'] . '<br>';
     echo 'Percent Electric Vehicles: ' . $item['percent_electric_vehicles'] . '<br>';
     echo '<br>';
-}
-
-
-// Usage
-$data = new Data();
-$filteredData = $data->fetchData();
-
-// Now $filteredData contains dates formatted as 'Month Day, Year'
-foreach ($filteredData as $item) {
-    echo 'Date: ' . $item['date'] . '<br>';
-    echo 'County: ' . $item['county'] . '<br>';
-    echo 'State: ' . $item['state'] . '<br>';
-    echo 'Vehicle Primary Use: ' . $item['vehicle_primary_use'] . '<br>';
-    echo 'Electric Vehicle Total: ' . $item['electric_vehicle_ev_total'] . '<br>';
-    echo 'Non-Electric Vehicles: ' . $item['non_electric_vehicles'] . '<br>';
-    echo 'Total Vehicles: ' . $item['total_vehicles'] . '<br>';
-    echo 'Percent Electric Vehicles: ' . $item['percent_electric_vehicles'] . '<br>';
-    echo '<br>';
-}
-
-
-// Usage
-$data = new Data();
-$data->echoAllData();
+}*/

@@ -1,23 +1,30 @@
 <?php
-include_once('../class/data.php'); // Adjust path as per your actual directory structure
+include ('../class/data.php'); // Adjust path as per your actual directory structure
 
 // Function to fetch data for a specific year
 function fetchDataByYear($year) {
     $data = new Data();
-    $filteredData = $data->filterDataByYear($year); // Assuming filterDataByYear exists in Data class
+    $filteredData = $data->filterDataByYear($year);
     return $filteredData;
 }
 
-// Handle API requests
-if (isset($_GET['year'])) {
-    $year = $_GET['year'];
-    $responseData = fetchDataByYear($year);
+// Manually set the year for debugging
+$year = '2021'; // Set the desired year for debugging
 
-    // Output as JSON
-    header('Content-Type: application/json');
-    echo json_encode($responseData);
+// If 'all' is selected, fetch all data without filtering by year
+if ($year == 'all') {
+    $data = new Data();
+    $responseData = $data->fetchData();
 } else {
-    http_response_code(400);
-    echo json_encode(array("message" => "Year parameter is required."));
+    // Fetch data for the specified year
+    $responseData = fetchDataByYear($year);
 }
+
+// Output as JSON
+header('Content-Type: application/json');
+echo "<pre>";
+print_r($responseData);
+echo "</pre>";
+
+echo json_encode($responseData);
 ?>
