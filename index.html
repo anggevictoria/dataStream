@@ -1,0 +1,98 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electric Vehicle Population Size History By County</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Electric Vehicle Population Size History By Country</h1>
+    <label for="year">Select Year:</label>
+    <select id="year" name="year" onchange="filterData()">
+        <option value="all">All</option>
+        <option value="2021">2021</option>
+        <option value="2022">2022</option>
+        <option value="2023">2023</option>
+        <option value="2024">2024</option>
+    </select>
+
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>County</th>
+                <th>State</th>
+                <th>Vehicle Primary Use</th>
+                <th>Electric Vehicle Total</th>
+                <th>Non-Electric Vehicles</th>
+                <th>Total Vehicles</th>
+                <th>Percent Electric Vehicles</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be inserted here by JavaScript -->
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchData('all'); // Initially fetch all data
+        });
+
+        function fetchData(year) {
+            fetch(`api/controller.php?year=${year}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.querySelector('#dataTable tbody');
+                    tableBody.innerHTML = '';
+
+                    data.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${formatDate(item.date)}</td>
+                            <td>${item.county}</td>
+                            <td>${item.state}</td>
+                            <td>${item.vehicle_primary_use}</td>
+                            <td>${item.electric_vehicle_ev_total}</td>
+                            <td>${item.non_electric_vehicles}</td>
+                            <td>${item.total_vehicles}</td>
+                            <td>${item.percent_electric_vehicles}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function filterData() {
+            const year = document.getElementById('year').value;
+            fetchData(year === 'all' ? 'all' : year);
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return `${getMonthName(date.getMonth())} ${date.getDate()}, ${date.getFullYear()}`;
+        }
+
+        function getMonthName(monthIndex) {
+            const months = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+            return months[monthIndex];
+        }
+    </script>
+</body>
+</html>
