@@ -1,5 +1,5 @@
 <?php
-include '../data.php';
+include '../Class/data.php';
 
 header('Content-Type: application/json');
 

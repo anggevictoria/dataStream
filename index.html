@@ -35,6 +35,7 @@
             <option value="2021">2021</option>
             <option value="2022">2022</option>
             <option value="2023">2023</option>
+            <option value="2024">2024</option>
         </select>
         <table id="evTable">
             <thead>
@@ -69,6 +70,8 @@
                 apiEndpoint = 'API/_22.php';
             } else if (year === '2023') {
                 apiEndpoint = 'API/_23.php';
+            } else if (year === '2024') {
+                apiEndpoint = 'API/_24.php';
             }
 
             fetch(apiEndpoint)
@@ -83,8 +86,10 @@
 
             data.forEach(row => {
                 const tr = document.createElement('tr');
+                // Format date
+                const formattedDate = formatDate(row.date);
                 tr.innerHTML = `
-                    <td>${row.date}</td>
+                    <td>${formattedDate}</td>
                     <td>${row.county}</td>
                     <td>${row.state}</td>
                     <td>${row.vehicle_primary_use}</td>
@@ -95,6 +100,13 @@
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        // Function to format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const options = { month: 'long', day: 'numeric', year: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
         }
 
         // Initial load
