@@ -31,14 +31,12 @@
     <div class="container">
         <h1>Electric Vehicle Population Size History By County</h1>
         <label for="year">Select Year:</label>
-        <select id="year" onchange="fetchData()">
-            <option value="all">All</option>
+        <select id="year">
             <option value="2021">2021</option>
             <option value="2022">2022</option>
             <option value="2023">2023</option>
-            <option value="2024">2024</option>
         </select>
-        <table id="dataTable">
+        <table id="evTable">
             <thead>
                 <tr>
                     <th>Date</th>
@@ -58,13 +56,20 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            fetchData(); // Initially fetch all data
+        document.getElementById('year').addEventListener('change', function() {
+            const selectedYear = this.value;
+            fetchDataForYear(selectedYear);
         });
 
-        function fetchData() {
-            const year = document.getElementById('year').value;
-            let apiEndpoint = `/api/controller.php?year=${year}`;
+        function fetchDataForYear(year) {
+            let apiEndpoint;
+            if (year === '2021') {
+                apiEndpoint = 'API/_21.php';
+            } else if (year === '2022') {
+                apiEndpoint = 'API/_22.php';
+            } else if (year === '2023') {
+                apiEndpoint = 'API/_23.php';
+            }
 
             fetch(apiEndpoint)
                 .then(response => response.json())
@@ -73,24 +78,27 @@
         }
 
         function populateTable(data) {
-            const tableBody = document.querySelector('#dataTable tbody');
-            tableBody.innerHTML = ''; // Clear previous data
+            const tbody = document.querySelector('#evTable tbody');
+            tbody.innerHTML = ''; // Clear previous data
 
-            data.forEach(item => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.date}</td>
-                    <td>${item.county}</td>
-                    <td>${item.state}</td>
-                    <td>${item.vehicle_primary_use}</td>
-                    <td>${item.electric_vehicle_ev_total}</td>
-                    <td>${item.non_electric_vehicles}</td>
-                    <td>${item.total_vehicles}</td>
-                    <td>${item.percent_electric_vehicles}</td>
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.date}</td>
+                    <td>${row.county}</td>
+                    <td>${row.state}</td>
+                    <td>${row.vehicle_primary_use}</td>
+                    <td>${row.electric_vehicle_ev_total}</td>
+                    <td>${row.non_electric_vehicles}</td>
+                    <td>${row.total_vehicles}</td>
+                    <td>${row.percent_electric_vehicles}</td>
                 `;
-                tableBody.appendChild(row);
+                tbody.appendChild(tr);
             });
         }
+
+        // Initial load
+        fetchDataForYear('2021');
     </script>
 </body>
 </html>
