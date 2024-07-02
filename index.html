@@ -79,7 +79,7 @@
             data.forEach(item => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${formatDate(item.date)}</td>
+                    <td>${item.date}</td>
                     <td>${item.county}</td>
                     <td>${item.state}</td>
                     <td>${item.vehicle_primary_use}</td>
@@ -90,19 +90,6 @@
                 `;
                 tableBody.appendChild(row);
             });
-        }
-
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return `${getMonthName(date.getMonth())} ${date.getDate()}, ${date.getFullYear()}`;
-        }
-
-        function getMonthName(monthIndex) {
-            const months = [
-                "January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"
-            ];
-            return months[monthIndex];
         }
     </script>
 </body>

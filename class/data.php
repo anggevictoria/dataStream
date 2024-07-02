@@ -38,7 +38,6 @@ class Data
     public function filterDataByYear($year)
     {
         $data = $this->fetchData();
-    
         $filteredData = array_filter($data, function ($item) use ($year) {
             // Parse the date and get the year
             $itemYear = date('Y', strtotime($item['date']));
