@@ -91,7 +91,7 @@
                     <td>${row.electric_vehicle_ev_total}</td>
                     <td>${row.non_electric_vehicles}</td>
                     <td>${row.total_vehicles}</td>
-                    <td>${row.percent_electric_vehicles}</td>
+                    <td>${parseFloat(row.percent_electric_vehicles).toFixed(2)}</td>
                 `;
                 tbody.appendChild(tr);
             });
