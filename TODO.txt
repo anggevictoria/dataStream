@@ -1,0 +1,11 @@
+1. Feature: a button in home that populates the database
+    1.1 Button in home (UI)
+        - 4 button name insert data to (2021)
+        - a modal pops saying if:
+            - data was inserted successfully ((numberofdata) was inserted to your dB successfully)
+            - all data is in the database
+            - a missing data: num data is added to your dB
+    1.2 insertData.php - file that inserts data to database
+    1.3 APIs in between UI and insertData.php
+
+2. Try to implement feature 1 not just in year 2021 but also in other years
