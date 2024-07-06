@@ -1,6 +1,6 @@
 <?php
-include '../Class/data.php';
 
+include '../class/data.php';
 header('Content-Type: application/json');
 
 $allData = getEVData();
@@ -9,4 +9,5 @@ $filteredData = array_filter($allData, function($item) {
 });
 
 echo json_encode(array_values($filteredData));
+
 ?>

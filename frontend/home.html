@@ -1,0 +1,261 @@
+<?php
+include '../API/sessionCheck.php';
+?>  
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electric Vehicle Population Size History By County</title>
+    <link rel="stylesheet" href="./homeStyle.css">
+    <style>
+        /* Add styles for the container and scrollable table container */
+        .container {
+            margin: 50px auto; /* Equal top and bottom margin */
+            padding: 20px;
+            max-width: 1200px;
+            border: 1px solid #ccc; /* Optional: Add a border for better visibility */
+            background-color: #f9f9f9; /* Optional: Add a background color */
+        }
+
+        .scrollable-table-container {
+            max-height: 600px; /* Adjust this height as needed */
+            overflow-y: auto;
+            border: 1px solid #ccc; /* Optional: Add a border for better visibility */
+            margin-top: 20px; /* Optional: Add some space above the table */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd; /* Optional: Add a border to separate rows */
+        }
+
+        table th {
+            background-color: #f2f2f2; /* Optional: Add a background color to table headers */
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        // Function to check login status
+        function checkLoginStatus() {
+            fetch('API/checkLoginStatus.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.loggedIn) {
+                        window.location.href = '../index.html';
+                    } else {
+                        fetchUserData();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking login status:', error);
+                });
+        }
+
+        // Execute checkLoginStatus first before anything else
+        checkLoginStatus();
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Electric Vehicle Population Size History By County</h1>
+        <div class="filters">
+            <label for="year">Select Year:</label>
+            <select id="year">
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+            </select>
+            <label for="sortOrder">Sort Order:</label>
+            <select id="sortOrder">
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+            </select>
+            <button id="logoutBtn">Logout</button>
+            <button id="checkTableBtn">Check Table</button>
+        </div>
+
+        <!-- Scrollable Table -->
+        <div class="scrollable-table-container">
+            <table id="evTable">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>County</th>
+                        <th>State</th>
+                        <th>Vehicle Primary Use</th>
+                        <th>Electric Vehicle Total</th>
+                        <th>Non-Electric Vehicles</th>
+                        <th>Total Vehicles</th>
+                        <th>Percent Electric Vehicles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data rows will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id="modalText"></p>
+        </div>
+    </div>
+
+    <script>
+        // Modal handling
+        var modal = document.getElementById("myModal");
+        var span = document.getElementsByClassName("close")[0];
+        
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+        
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Add event listener for the checkTableBtn button
+        document.getElementById('checkTableBtn').addEventListener('click', function() {
+            fetch('API/checkTable.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.tableExists) {
+                        document.getElementById('checkTableBtn').disabled = true;
+                        document.getElementById('modalText').textContent = "Table year2021 already exists in the database.";
+                    } else {
+                        document.getElementById('checkTableBtn').disabled = false;
+                        document.getElementById('modalText').textContent = "Table year2021 does not exist in the database.";
+                    }
+                    modal.style.display = "block";
+                })
+                .catch(error => {
+                    console.error('Error checking table status:', error);
+                });
+        });
+
+        document.getElementById('year').addEventListener('change', function() {
+            const selectedYear = this.value;
+            const sortOrder = document.getElementById('sortOrder').value;
+            fetchDataForYear(selectedYear, sortOrder);
+        });
+
+        document.getElementById('sortOrder').addEventListener('change', function() {
+            const sortOrder = this.value;
+            const selectedYear = document.getElementById('year').value;
+            fetchDataForYear(selectedYear, sortOrder);
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            // Redirect to logout.php
+            window.location.href = '../API/logout.php';
+        });
+
+        function fetchDataForYear(year, sortOrder) {
+            let apiEndpoint;
+            if (year === '2021') {
+                apiEndpoint = '../API/_21.php';
+            } else if (year === '2022') {
+                apiEndpoint = '../API/_22.php';
+            } else if (year === '2023') {
+                apiEndpoint = '../API/_23.php';
+            } else if (year === '2024') {
+                apiEndpoint = '../API/_24.php';
+            }
+
+            fetch(apiEndpoint)
+                .then(response => response.json())
+                .then(data => {
+                    if (sortOrder === 'asc') {
+                        data.sort((a, b) => new Date(a.date) - new Date(b.date));
+                    } else {
+                        data.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    }
+                    populateTable(data);
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function populateTable(data) {
+            const tbody = document.querySelector('#evTable tbody');
+            tbody.innerHTML = ''; // Clear previous data
+
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                // Format date
+                const formattedDate = formatDate(row.date);
+                tr.innerHTML = `
+                    <td>${formattedDate}</td>
+                    <td>${row.county}</td>
+                    <td>${row.state}</td>
+                    <td>${row.vehicle_primary_use}</td>
+                    <td>${row.electric_vehicle_ev_total}</td>
+                    <td>${row.non_electric_vehicles}</td>
+                    <td>${row.total_vehicles}</td>
+                    <td>${parseFloat(row.percent_electric_vehicles).toFixed(2)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Function to format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const options = { month: 'long', day: 'numeric', year: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        // Initial load
+        fetchDataForYear('2021', 'asc');
+    </script>
+</body>
+</html>

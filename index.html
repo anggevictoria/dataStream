@@ -1,135 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Electric Vehicle Population Size History By County</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            width: 80%;
-            margin: 0 auto;
-            text-align: center;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-    </style>
+    <title>Login</title>
+    <link rel="stylesheet" href="frontend/style.css">
 </head>
+
 <body>
-    <div class="container">
-        <h1>Electric Vehicle Population Size History By County</h1>
-        <label for="year">Select Year:</label>
-        <select id="year">
-            <option value="2021">2021</option>
-            <option value="2022">2022</option>
-            <option value="2023">2023</option>
-            <option value="2024">2024</option>
-        </select>
-        <label for="sortOrder">Sort Order:</label>
-        <select id="sortOrder">
-            <option value="asc">Ascending</option>
-            <option value="desc">Descending</option>
-        </select>
-        <table id="evTable">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>County</th>
-                    <th>State</th>
-                    <th>Vehicle Primary Use</th>
-                    <th>Electric Vehicle Total</th>
-                    <th>Non-Electric Vehicles</th>
-                    <th>Total Vehicles</th>
-                    <th>Percent Electric Vehicles</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Data rows will be inserted here by JavaScript -->
-            </tbody>
-        </table>
+    
+<!--LOGIN FORM AND MESSAGES-->
+<?php 
+    session_start();
+    // This PHP block outputs the text of the session message.
+    if(isset($_SESSION['message'])):
+?>
+    <div class="alert alert-<?php echo $_SESSION['message']['alert']; ?> msg">
+        <?php echo $_SESSION['message']['text']; ?>
     </div>
-
     <script>
-        document.getElementById('year').addEventListener('change', function() {
-            const selectedYear = this.value;
-            const sortOrder = document.getElementById('sortOrder').value;
-            fetchDataForYear(selectedYear, sortOrder);
-        });
-
-        document.getElementById('sortOrder').addEventListener('change', function() {
-            const sortOrder = this.value;
-            const selectedYear = document.getElementById('year').value;
-            fetchDataForYear(selectedYear, sortOrder);
-        });
-
-        function fetchDataForYear(year, sortOrder) {
-            let apiEndpoint;
-            if (year === '2021') {
-                apiEndpoint = 'api/_21.php';
-            } else if (year === '2022') {
-                apiEndpoint = 'api/_22.php';
-            } else if (year === '2023') {
-                apiEndpoint = 'api/_23.php';
-            } else if (year === '2024') {
-                apiEndpoint = 'api/_24.php';
-            }
-
-            fetch(apiEndpoint)
-                .then(response => response.json())
-                .then(data => {
-                    if (sortOrder === 'asc') {
-                        data.sort((a, b) => new Date(a.date) - new Date(b.date));
-                    } else {
-                        data.sort((a, b) => new Date(b.date) - new Date(a.date));
-                    }
-                    populateTable(data);
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        }
-
-        function populateTable(data) {
-            const tbody = document.querySelector('#evTable tbody');
-            tbody.innerHTML = ''; // Clear previous data
-
-            data.forEach(row => {
-                const tr = document.createElement('tr');
-                // Format date
-                const formattedDate = formatDate(row.date);
-                tr.innerHTML = `
-                    <td>${formattedDate}</td>
-                    <td>${row.county}</td>
-                    <td>${row.state}</td>
-                    <td>${row.vehicle_primary_use}</td>
-                    <td>${row.electric_vehicle_ev_total}</td>
-                    <td>${row.non_electric_vehicles}</td>
-                    <td>${row.total_vehicles}</td>
-                    <td>${parseFloat(row.percent_electric_vehicles).toFixed(2)}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // Function to format date
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const options = { month: 'long', day: 'numeric', year: 'numeric' };
-            return date.toLocaleDateString('en-US', options);
-        }
-
-        // Initial load
-        fetchDataForYear('2021', 'asc');
+        // Remove the message after 3 seconds
+        setTimeout(function() {
+            document.querySelector('.msg').remove();
+        }, 3000);
     </script>
+<?php
+    unset($_SESSION['message']); // Clear the message
+    endif;
+?>
+
+<!-- This form sends a POST request to "API/login.php" when submitted. -->
+<div class="login-box">
+    <h2>e-Vehicle Population Size </h2>
+    
+    <form class="form" action="API/login.php" method="POST">
+        <div class="user-box">
+            <input type="text" name="username" required>
+            <label>Username</label>
+        </div>
+        <div class="user-box">
+            <input type="password" name="password" required>
+            <label>Password</label>
+        </div>
+        <input type="submit" value="Login" name="login">
+    </form>
+    
+    <p class="text--center">Not a member? <a href="frontend/registration.html">Register now</a> 
+        <svg class="icon">
+            <use xlink:href="#icon-arrow-right"></use>
+        </svg>
+    </p>
+</div>
+
+</svg>
+
 </body>
+
 </html>
