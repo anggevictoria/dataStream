@@ -203,13 +203,13 @@ include '../API/sessionCheck.php';
         function fetchDataForYear(year, sortOrder) {
             let apiEndpoint;
             if (year === '2021') {
-                apiEndpoint = '../API/_21.php';
+                apiEndpoint = '../api/displayData/_21.php';
             } else if (year === '2022') {
-                apiEndpoint = '../API/_22.php';
+                apiEndpoint = '../api/displayData/_22.php';
             } else if (year === '2023') {
-                apiEndpoint = '../API/_23.php';
+                apiEndpoint = '../api/displayData/_23.php';
             } else if (year === '2024') {
-                apiEndpoint = '../API/_24.php';
+                apiEndpoint = '../api/displayData/_24.php';
             }
 
             fetch(apiEndpoint)
