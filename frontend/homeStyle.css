@@ -1,0 +1,60 @@
+/* Import Google Fonts */
+@import url("https://fonts.googleapis.com/css?family=Inconsolata:400,700");
+
+/* Global styles */
+body {
+    font-family: "Inconsolata", Arial, sans-serif;
+    background-color: #e2e1dd; /* 60% color */
+    color: #9a352f; /* 20% color */
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 80%;
+    margin: 20px auto;
+    text-align: center;
+    background-color: #fff; /* White background for container */
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.filters {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.filters label, .filters select {
+    margin-right: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff; /* White background for table */
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+}
+
+th {
+    background-color: #bfb8ae; /* 30% color */
+    color: #453a94; /* Adjusted color for headers */
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f4f4f4; /* Alternate row color */
+}
+
+tbody tr:hover {
+    background-color: #ddd; /* Hover color */
+}
