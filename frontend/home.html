@@ -182,6 +182,8 @@ include '../API/sessionCheck.php';
             window.location.href = '../API/logout.php';
         });
 
+
+
         function fetchDataForYear(year, sortOrder) {
             let apiEndpoint;
             if (year === '2021') {
@@ -235,6 +237,39 @@ include '../API/sessionCheck.php';
             const options = { month: 'long', day: 'numeric', year: 'numeric' };
             return date.toLocaleDateString('en-US', options);
         }
+
+        //Insert data to database
+        document.getElementById('update2021').addEventListener('click', function() {
+        fetch('../api/_21populateDb.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Display the response in the modal
+            document.getElementById('modalText').innerText = data.message;
+            modal.style.display = "block";
+        })
+        .catch(error => {
+            console.error('Error updating database:', error);
+        });
+    });
+
+    // Modal handling
+    var modal = document.getElementById("myModal");
+    var span = document.getElementsByClassName("close")[0];
+
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
 
         // Initial load
         fetchDataForYear('2021', 'asc');

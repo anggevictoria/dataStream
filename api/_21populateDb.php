@@ -1,16 +1,13 @@
 <?php
-// _21populateDb.php
+// This codes invokes the updateData2021() method from the updateData.php class.
 
-// Include necessary files
-include '../Class/data.php';
-include '../dB/conn.php'; // Adjust the path as per your file structure
 
-// Instantiate DataUpdater class with database connection
-$dataUpdater = new DataUpdater($conn);
+include '../Class/updateData.php';
+include '../dB/conn.php';
 
-// Call the updateData2021 method
-$message = $dataUpdater->updateData2021();
+$dataUpdater = new DataUpdater($pdo);
+$result = $dataUpdater->updateData2021();
 
-// Output the result message
-echo $message;
+// Return the result as JSON
+echo json_encode(['message' => $result]);
 ?>
