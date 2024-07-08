@@ -116,7 +116,7 @@ include '../API/sessionCheck.php';
                 <option value="desc">Descending</option>
             </select>
             <button id="logoutBtn">Logout</button>
-            <button id="checkTableBtn">Check Table</button>
+            <button id="update2021">Update 2021 Database</button>
         </div>
 
         <!-- Scrollable Table -->
@@ -164,24 +164,6 @@ include '../API/sessionCheck.php';
             }
         }
 
-        // Add event listener for the checkTableBtn button
-        document.getElementById('checkTableBtn').addEventListener('click', function() {
-            fetch('API/checkTable.php')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.tableExists) {
-                        document.getElementById('checkTableBtn').disabled = true;
-                        document.getElementById('modalText').textContent = "Table year2021 already exists in the database.";
-                    } else {
-                        document.getElementById('checkTableBtn').disabled = false;
-                        document.getElementById('modalText').textContent = "Table year2021 does not exist in the database.";
-                    }
-                    modal.style.display = "block";
-                })
-                .catch(error => {
-                    console.error('Error checking table status:', error);
-                });
-        });
 
         document.getElementById('year').addEventListener('change', function() {
             const selectedYear = this.value;
@@ -199,6 +181,8 @@ include '../API/sessionCheck.php';
             // Redirect to logout.php
             window.location.href = '../API/logout.php';
         });
+
+
 
         function fetchDataForYear(year, sortOrder) {
             let apiEndpoint;
@@ -253,6 +237,39 @@ include '../API/sessionCheck.php';
             const options = { month: 'long', day: 'numeric', year: 'numeric' };
             return date.toLocaleDateString('en-US', options);
         }
+
+        //Insert data to database
+        document.getElementById('update2021').addEventListener('click', function() {
+        fetch('../api/_21populateDb.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Display the response in the modal
+            document.getElementById('modalText').innerText = data.message;
+            modal.style.display = "block";
+        })
+        .catch(error => {
+            console.error('Error updating database:', error);
+        });
+    });
+
+    // Modal handling
+    var modal = document.getElementById("myModal");
+    var span = document.getElementsByClassName("close")[0];
+
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
 
         // Initial load
         fetchDataForYear('2021', 'asc');
