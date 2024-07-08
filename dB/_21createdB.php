@@ -1,6 +1,6 @@
 <?php
 include '../Class/data.php';
-
+include '../dB/conn.php';
 $servername = "localhost";
 $username = "root";
 $password = "";
